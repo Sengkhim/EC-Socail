@@ -1,13 +1,13 @@
 ﻿using GraphQL_APIs.Entities;
 using GraphQL_APIs.Module;
+using StackExchange.Redis;
 
 namespace GraphQL_APIs.Service;
 
 public interface IBookingService
 {
+    Task<IEnumerable<Booking>> GetAllCacheAsync(IConnectionMultiplexer redis);
     IQueryable<Booking> GetAllAsync();
-
-    IQueryable<Booking> GetByIdAsync(string id);
 }
 
 public interface IBookingMutationService
