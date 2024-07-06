@@ -1,14 +1,21 @@
-﻿using GraphQL_APIs.Types;
+﻿using GraphQL_APIs.Database;
+using GraphQL_APIs.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GraphQL_APIs.Schema;
 
-public class Query
+public abstract class Query
 {
-    public string Hello() => "Hello, World!";
-    
-    public List<Book> GetBooks() => new ()
-    {
-        new Book { Title = "Book 1", Author = "Author 1" },
-        new Book { Title = "Book 2", Author = "Author 2" }
-    };
+    public string Text() => "Hello Graph QL";
+    public async Task<List<Booking>> GetAllAsync([Service] AppDbContext service, CancellationToken cancellationToken)
+    => await service.Set<Booking>().ToListAsync(cancellationToken);
 }
+
+// public abstract class QueryType(AppDbContext context) : ObjectType<Query>
+// {
+//     protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
+//     {
+//         descriptor
+//             .Field(f => f.GetAllAsync(context));
+//     }
+// }
