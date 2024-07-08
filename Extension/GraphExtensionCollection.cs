@@ -2,6 +2,7 @@
 using System.Reflection;
 using GraphQL_APIs.Core.Attribute;
 using GraphQL_APIs.Database;
+using GraphQL_APIs.Exception;
 using GraphQL_APIs.Module;
 using GraphQL_APIs.Service;
 using GraphQL_APIs.Types;
@@ -75,6 +76,8 @@ public static class GraphExtensionCollection
     {
         service
             .AddGraphQLServer()
+            .AllowIntrospection(true)
+            .AddErrorFilter<GraphQlErrorFilter>()
             .AddQueryType<QueryType>()
             .AddMutationType<MutationType>()
             .AddTypeExtensionLayer();

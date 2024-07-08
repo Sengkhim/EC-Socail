@@ -1,3 +1,4 @@
+using GraphQL_APIs.Exception;
 using GraphQL_APIs.Extension;
 using HotChocolate.AspNetCore;
 
@@ -7,6 +8,8 @@ builder.Services.AddDatabaseLayer(builder.Configuration);
 builder.Services.AddCoreLayer(builder.Configuration);
 builder.Services.AddGraphQlServerLayer();
 builder.Services.AddInfrastructureLayer(builder.Environment);
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
