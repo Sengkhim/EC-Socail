@@ -1,4 +1,5 @@
 ﻿using GraphQL_APIs.Entities;
+using GraphQL_APIs.Implementation;
 using GraphQL_APIs.Service;
 using GraphQL_APIs.Types;
 using Microsoft.EntityFrameworkCore;
@@ -17,4 +18,9 @@ public class BookingQuery
             [Service] IBookingService bookingService,
             [Service] IConnectionMultiplexer redis
         ) => await bookingService.GetAllCacheAsync(redis);
+
+    public async Task<IEnumerable<Booking>> GetBookingsRedis(
+        [Service] ICacheService cacheService,
+        [Service] IConnectionMultiplexer redis
+    ) => await cacheService.TryGet(redis);
 }

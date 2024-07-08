@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDatabaseLayer(builder.Configuration);
 builder.Services.AddCoreLayer(builder.Configuration);
 builder.Services.AddGraphQlServerLayer();
-builder.Services.AddInfrastructureLayer();
+builder.Services.AddInfrastructureLayer(builder.Environment);
 
 var app = builder.Build();
 

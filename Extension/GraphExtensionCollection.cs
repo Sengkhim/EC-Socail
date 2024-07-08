@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using GraphQL_APIs.Core.Attribute;
 using GraphQL_APIs.Database;
 using GraphQL_APIs.Module;
 using GraphQL_APIs.Service;
@@ -37,12 +38,15 @@ public static class GraphExtensionCollection
         }
     }
 
-    public static void AddInfrastructureLayer(this IServiceCollection service)
+    public static void AddInfrastructureLayer(this IServiceCollection service, IHostEnvironment hostEnvironment)
     {
         service.AddScoped<IBookingService, BookingQueryService>();
         service.AddScoped<IBookingMutationService, BookingMutationService>();
         service.AddSingleton<IConnectionMultiplexer>(_ => 
             ConnectionMultiplexer.Connect("localhost:6379"));
+        
+        // Add core dependencies
+        service.AddServiceAttributeHandler(hostEnvironment);
     }
 
     public static void AddCoreLayer(this IServiceCollection service, IConfiguration configuration)
