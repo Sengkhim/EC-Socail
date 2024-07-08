@@ -1,9 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using GraphQL_APIs.Database;
+using GraphQL_APIs.Module;
+using GraphQL_APIs.Service;
 using GraphQL_APIs.Types;
 using HotChocolate.Execution.Configuration;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace GraphQL_APIs.Extension;
 
@@ -16,8 +19,8 @@ public static class GraphExtensionCollection
         // Iterate all query extensions type
         foreach (var assembly in assemblies)
         {
-            var types = assembly.GetTypes();
-            var queryTypes = types.Where(type => type.GetCustomAttribute<ExtendObjectTypeAttribute>()?.ExtendsType == typeof(QueryType));
+            var queryTypes = assembly.GetTypes().Where(type => 
+                type.GetCustomAttribute<ExtendObjectTypeAttribute>()?.ExtendsType == typeof(QueryType));
            
             foreach (var queryType in queryTypes)
                 builder.AddTypeExtension(queryType);
@@ -26,12 +29,20 @@ public static class GraphExtensionCollection
         // Iterate all mutation extensions type
         foreach (var assembly in assemblies)
         {
-            var types = assembly.GetTypes();
-            var mutationTypes = types.Where(type => type.GetCustomAttribute<ExtendObjectTypeAttribute>()?.ExtendsType == typeof(MutationType));
-           
+            var mutationTypes = assembly.GetTypes().Where(type => 
+                type.GetCustomAttribute<ExtendObjectTypeAttribute>()?.ExtendsType == typeof(MutationType));
+            
             foreach (var mutationType in mutationTypes)
                 builder.AddTypeExtension(mutationType);
         }
+    }
+
+    public static void AddInfrastructureLayer(this IServiceCollection service)
+    {
+        service.AddScoped<IBookingService, BookingQueryService>();
+        service.AddScoped<IBookingMutationService, BookingMutationService>();
+        service.AddSingleton<IConnectionMultiplexer>(_ => 
+            ConnectionMultiplexer.Connect("localhost:6379"));
     }
 
     public static void AddCoreLayer(this IServiceCollection service, IConfiguration configuration)
